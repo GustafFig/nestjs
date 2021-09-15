@@ -1,0 +1,33 @@
+version: '3'
+
+# Arquivo criado apartir da primeira aula do full cycle setembro de 2021
+# https://imersao.fullcycle.com.br/aula/aula-1/
+
+# permite declarar os containers
+services:
+  # container que carrega a aplicação
+  app:
+    # procura o Dockerfile desta página
+    build: .
+    # após 40s que o banco está de pé na porta 3306 dele executa o arquivo entrypoint.sh
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 40s ./.docker/entrypoint.sh
+    # tanto ports como volume cria um espelhamento no padrão HOST:CONTAINER
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/home/node/app
+    depends_on: # espera db para subir
+      - db
+
+  db:
+    # imagem do mysql
+    build: ./.docker/mysql
+    # se der erro ele se reinicia
+    restart: always
+    tty: true
+    volumes:
+      - ./.docker/dbdata:/var/lib/mysql
+    # Variáveis que o container usa para cadastrar as credenciais do banco de dados
+    environment:
+      - MYSQL_DATABASE=fin
+      - MYSQL_ROOT_PASSWORD=root
