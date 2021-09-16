@@ -13,7 +13,7 @@ services:
     entrypoint: dockerize -wait tcp://db:3306 -timeout 40s ./.docker/entrypoint.sh
     # tanto ports como volume cria um espelhamento no padrão HOST:CONTAINER
     ports:
-      - 3000:3000
+      - 3001:3000
     volumes:
       - .:/home/node/app
     depends_on: # espera db para subir
@@ -27,6 +27,8 @@ services:
     tty: true
     volumes:
       - ./.docker/dbdata:/var/lib/mysql
+    ports:
+      - 3002:3306
     # Variáveis que o container usa para cadastrar as credenciais do banco de dados
     environment:
       - MYSQL_DATABASE=fin
